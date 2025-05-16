@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background -->
+    <rect width="32" height="32" rx="8" fill="#10B981"/>
+    
+    <!-- TV Screen -->
+    <path d="M8 11C8 10.4477 8.44772 10 9 10H23C23.5523 10 24 10.4477 24 11V21C24 21.5523 23.5523 22 23 22H9C8.44772 22 8 21.5523 8 21V11Z" 
+          fill="white"/>
+    
+    <!-- TV Stand -->
+    <path d="M13 22H19V24H13V22Z" fill="white"/>
+    <path d="M12 24H20V25H12V24Z" fill="white"/>
+    
+    <!-- TV Antenna -->
+    <path d="M12 8L16 10L20 8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+</svg> 

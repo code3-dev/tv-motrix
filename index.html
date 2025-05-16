@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TV Motrix</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <!-- Tailwind CSS - Utility-first CSS framework -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Vazirmatn Font - Persian/Arabic typeface -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome - Icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- HLS.js - HTTP Live Streaming player -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <!-- Custom CSS for styling -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Tailwind CSS Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'vazirmatn': ['Vazirmatn', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="text-white">
+    <!-- Navigation -->
+    <nav class="glass-effect sticky top-0 z-40 py-4">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <h1 class="text-3xl font-bold gradient-text">TV Motrix</h1>
+                </div>
+                <button onclick="openCountryModal()" 
+                        class="flex items-center gap-2 px-4 py-2 bg-blue-600/20 hover:bg-blue-600/30 rounded-lg transition-all">
+                    <i class="fas fa-globe"></i>
+                    <span id="selectedCountryText">انتخاب کشور</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto p-4">
+        <!-- Search Section -->
+        <div class="max-w-2xl mx-auto my-8 px-4">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold mb-2">جستجوی کانال</h2>
+                <p class="text-gray-400">نام کانال مورد نظر خود را جستجو کنید</p>
+            </div>
+            <div class="glass-effect rounded-xl p-6">
+                <div class="search-container mb-4">
+                    <input type="text" 
+                           id="channelSearch"
+                           class="w-full pl-4 pr-10 py-3 bg-gray-800/50 rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none transition-all"
+                           placeholder="نام کانال را وارد کنید...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="flex flex-wrap gap-2" id="searchFilters">
+                    <button onclick="toggleFilter('all')" class="filter-btn active" data-filter="all">
+                        <i class="fas fa-border-all"></i> همه
+                    </button>
+                    <button onclick="toggleFilter('iptv')" class="filter-btn" data-filter="iptv">
+                        <i class="fas fa-tv"></i> IPTV
+                    </button>
+                    <button onclick="toggleFilter('youtube')" class="filter-btn" data-filter="youtube">
+                        <i class="fab fa-youtube"></i> YouTube
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Count -->
+        <div id="resultsCount" class="text-center mb-6 text-gray-400 hidden">
+            <span class="font-semibold text-white" id="channelCount">0</span> کانال یافت شد
+        </div>
+
+        <!-- Channels Grid -->
+        <div id="channelGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Channels will be loaded here -->
+        </div>
+
+        <!-- No Results Message -->
+        <div id="noResults" class="text-center py-12 hidden">
+            <div class="text-gray-500 mb-4">
+                <i class="fas fa-search text-4xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">کانالی یافت نشد</h3>
+            <p class="text-gray-400">لطفاً با عبارت دیگری جستجو کنید</p>
+        </div>
+    </main>
+
+    <!-- Country Selection Modal -->
+    <div id="countryModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50">
+        <div class="fixed inset-0 flex items-center justify-center p-4">
+            <div class="glass-effect rounded-2xl w-full max-w-3xl modal-animation">
+                <div class="p-4 border-b border-gray-700">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold">انتخاب کشور</h2>
+                        <button onclick="closeCountryModal()" class="text-gray-400 hover:text-white">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="search-container">
+                        <input type="text" 
+                               id="countrySearch"
+                               class="w-full pl-4 pr-10 py-3 bg-gray-800/50 rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none transition-all"
+                               placeholder="جستجوی کشور...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+                <div class="max-h-[60vh] overflow-y-auto custom-scrollbar">
+                    <div id="countryGrid" class="country-grid">
+                        <!-- Countries will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Player Modal -->
+    <div id="playerModal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-sm z-50">
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="glass-effect rounded-2xl w-full max-w-4xl overflow-hidden modal-animation">
+                <div class="p-4 flex justify-between items-center">
+                    <h2 id="channelTitle" class="text-xl font-bold"></h2>
+                    <button onclick="closePlayer()" 
+                            class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800/50 hover:bg-gray-700/50 transition-colors">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="playerContainer" class="aspect-w-16 aspect-h-9 bg-black">
+                    <!-- Player will be loaded here -->
+                </div>
+                <div class="p-4 flex gap-4">
+                    <button id="toggleIPTV" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors hidden">
+                        <i class="fas fa-tv ml-2"></i>IPTV
+                    </button>
+                    <button id="toggleYouTube" class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 transition-colors hidden">
+                        <i class="fab fa-youtube ml-2"></i>YouTube
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script src="app.js"></script>
+</body>
+</html> 
